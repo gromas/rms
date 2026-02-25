@@ -30,15 +30,17 @@ $$\forall s_1 \in D_1, \forall s_2 \in D_2: s_1|_{V_{shared}} = s_2|_{V_{shared}
 3. **Сходимость**: Пространство состояний конечно ($\prod |D_i|$), а отсутствие циклов в дереве поиска гарантирует достижение терминального состояния (SAT или полное доказательство UNSAT).
 
 ### 3. Оценка сложности
-Сложность алгоритма определяется как:
-$$O(I \cdot (E \cdot d + K \cdot d^k))$$
-Где:
-* $I$ — количество итераций рекурсии.
-* $E$ — количество ребер в графе зависимостей макро-узлов.
-* $d$ — средний размер домена (количество состояний в узле).
-* $K$ — количество макро-узлов.
 
-Благодаря «широким» узлам, эффективная глубина поиска сокращается с $N$ (число переменных) до $K \approx N/3$.
+Комплексная сложность алгоритма определяется выражением:
+
+$$O(I \cdot (E \cdot d + K \cdot d^k))$$
+
+**Детализация параметров:**
+*   $I$ — количество итераций рекурсивного поиска (в худшем случае — экспоненциально, но на практике на порядки меньше полного перебора за счет рандомизации).
+*   $E \cdot d$ — стоимость **AC-3 фильтрации** на графе: каждое из $E$ рёбер обрабатывается с доменом размера $d$.
+*   $K \cdot d^k$ — стоимость предвычисления совместимости для каждой из $K$ троек. 
+    *   *Важное уточнение:* Для 3-SAT число переменных в макро-узле $k \le 9$ (3 клоза $\times$ 3 литерала). Это делает экспоненту **локальной константой**, превращая глобальный комбинаторный взрыв в контролируемый расчет внутри узла.
+
 
 ---
 
@@ -68,10 +70,15 @@ The proof of determinism relies on the completeness of AC-3 and systematic state
 3. **Convergence**: The state space is finite ($\prod |D_i|$), and the absence of cycles in the search tree ensures a terminal state (SAT or total UNSAT proof).
 
 ### 3. Complexity Analysis
-The complexity is defined as:
-$$O(I \cdot (E \cdot d + K \cdot d^k))$$
-Where $I$ is the number of recursion iterations, $E$ is the number of edges in the macro-node dependency graph, and $d$ is the average domain size. Macro-nodes reduce effective search depth from $N$ to $K \approx N/3$.
 
+The overall complexity is defined as:
+$$O(I \cdot (E \cdot d + K \cdot d^k))$$
+
+**Parameter Breakdown:**
+*   $I$: Number of recursion iterations (exponential in the worst case, but practically much lower due to randomized heuristics).
+*   $E \cdot d$: Cost of **AC-3 filtration**: each of the $E$ edges is processed against a domain of size $d$.
+*   $K \cdot d^k$: Cost of precomputing compatibility for each of the $K$ triples.
+    *   *Note:* In 3-SAT, the variables per macro-node $k \le 9$. This encapsulates the exponential growth within a **local constant**, effectively turning a global combinatorial explosion into a controlled per-node computation.
 ---
 
 ## 📚 References / Литература
